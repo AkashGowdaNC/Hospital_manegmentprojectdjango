@@ -1,0 +1,10 @@
+{% extends 'core/base_form.html' %}
+
+{% block form_icon %}fa-user-md{% endblock %}
+
+{% block cancel_url %}{% url 'doctor_list' %}{% endblock %}
+{% block cancel_url_bottom %}{% url 'doctor_list' %}{% endblock %}
+
+{% block submit_text %}
+    {% if doctor %}Update Doctor{% else %}Create Doctor{% endif %}
+{% endblock %}

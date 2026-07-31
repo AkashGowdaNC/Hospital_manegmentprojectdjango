@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" data-aos="fade-up">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all hover:shadow-3xl">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-hospital-mint to-cyan-600 px-8 py-6 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center">
+                    <i
+                        class="fas {% block form_icon %}fa-edit{% endblock %} mr-4 bg-white/20 p-2 rounded-lg backdrop-blur-sm"></i>
+                    {% block submit_text %}Form{% endblock %}
+                </h2>
+                <a href="{% block cancel_url %}{% endblock %}"
+                    class="text-white hover:text-cyan-100 transition-colors p-2 hover:bg-white/10 rounded-full">
+                    <i class="fas fa-times text-xl"></i>
+                </a>
+            </div>
+
+            <!-- Form -->
+            <form method="post" enctype="multipart/form-data" class="p-8 space-y-6">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-md animate-pulse">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Errors</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                {{ form.non_field_errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4">
+                    {% for field in form %}
+                    <div class="group">
+                        <label for="{{ field.id_for_label }}"
+                            class="block text-sm font-semibold text-gray-700 mb-2 group-hover:text-hospital-mint transition-colors">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                            <span class="text-red-500 ml-1">*</span>
+                            {% endif %}
+                        </label>
+
+                        <div class="relative">
+                            {% if field.errors %}
+                            {{ field|add_class:"border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500
+                            shadow-sm" }}
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            {% else %}
+                            {{ field }}
+                            {% endif %}
+                        </div>
+
+                        {% if field.help_text %}
+                        <p class="mt-2 text-sm text-gray-500 flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-gray-400"></i>
+                            {{ field.help_text }}
+                        </p>
+                        {% endif %}
+
+                        {% if field.errors %}
+                        <p class="mt-2 text-sm text-red-600 flex items-center animate-bounce-slow">
+                            <span class="font-medium">{{ field.errors.0 }}</span>
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end space-x-4 mt-10 pt-6 border-t border-gray-100">
+                    <a href="{% block cancel_url_bottom %}{% endblock %}"
+                        class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium transition-all duration-300 flex items-center shadow-sm hover:shadow-md">
+                        <i class="fas fa-undo mr-2"></i> Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-8 py-3 bg-gradient-to-r from-hospital-mint to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

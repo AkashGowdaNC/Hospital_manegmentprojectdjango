@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8">
+        <div class="cherry-gradient px-6 py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <h2 class="text-2xl font-bold text-white flex items-center mb-4 sm:mb-0">
+                    <i class="fas fa-user-md mr-3"></i>
+                    Doctors Management
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'doctor_create' %}"
+                        class="inline-flex items-center px-4 py-2 bg-white text-primary text-sm font-medium rounded-lg hover:bg-cyan-50 transition-colors duration-300 transform hover:scale-105">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Add New Doctor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats and Search -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Stats -->
+                <div class="bg-cyan-50 rounded-lg p-4 border border-cyan-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-hospital-deep font-semibold">Total Doctors</p>
+                            <p class="text-2xl font-bold text-primary">{{ total_doctors }}</p>
+                        </div>
+                        <i class="fas fa-user-md text-hospital-deep text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <form method="get" class="flex space-x-4">
+                        <input type="text" name="search" value="{{ search_query }}"
+                            placeholder="Search doctors by name, ID, or specialization..."
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+                        <button type="submit"
+                            class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-hospital-deep transition-colors duration-300">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctors Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for doctor in page_obj %}
+        <div
+            class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <!-- Doctor Header -->
+            <div class="bg-gradient-to-r from-primary to-hospital-deep px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div
+                            class="flex-shrink-0 h-12 w-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user-md text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Dr. {{ doctor.name }}</h3>
+                            <p class="text-cyan-100 text-sm">{{ doctor.doctor_id }}</p>
+                        </div>
+                    </div>
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-primary">
+                        {{ doctor.specialization }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Doctor Details -->
+            <div class="p-6">
+                <div class="space-y-3">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-graduation-cap text-cyan-500 mr-3 w-5"></i>
+                        <span>{{ doctor.qualification }}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-briefcase text-green-500 mr-3 w-5"></i>
+                        <span>{{ doctor.experience }} years experience</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-phone text-purple-500 mr-3 w-5"></i>
+                        <span>{{ doctor.contact_number }}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-clock text-orange-500 mr-3 w-5"></i>
+                        <span>{{ doctor.available_from|time:"g:i A" }} - {{ doctor.available_to|time:"g:i A" }}</span>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-money-bill-wave text-green-500 mr-3 w-5"></i>
+                        <span>₹{{ doctor.consultation_fee }}</span>
+                    </div>
+                </div>
+
+                <!-- Availability Status -->
+                <div class="mt-4 flex items-center justify-between">
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if doctor.is_available %}bg-cyan-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                        <i class="fas fa-circle text-xs mr-1"></i>
+                        {% if doctor.is_available %}Available{% else %}Not Available{% endif %}
+                    </span>
+                    {% if doctor.bio %}
+                    <button onclick="toggleBio('{{ doctor.id }}')"
+                        class="text-primary hover:text-hospital-deep text-sm font-medium">
+                        View Bio
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Bio (Hidden by default) -->
+                {% if doctor.bio %}
+                <div id="bio-{{ doctor.id }}" class="mt-3 hidden">
+                    <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">{{ doctor.bio }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                    <a href="{% url 'doctor_detail' doctor.pk %}"
+                        class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-eye mr-1"></i>
+                        View
+                    </a>
+                    <div class="flex space-x-2">
+                        <a href="{% url 'doctor_update' doctor.pk %}"
+                            class="inline-flex items-center px-3 py-1 border border-cyan-300 text-sm font-medium rounded-md text-cyan-700 bg-white hover:bg-cyan-50 transition-colors duration-200">
+                            <i class="fas fa-edit mr-1"></i>
+                            Edit
+                        </a>
+                        <a href="{% url 'doctor_delete' doctor.pk %}"
+                            class="inline-flex items-center px-3 py-1 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 transition-colors duration-200">
+                            <i class="fas fa-trash mr-1"></i>
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="md:col-span-2 lg:col-span-3">
+            <div class="bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+                <i class="fas fa-user-md text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No doctors found</h3>
+                <p class="text-gray-500 mb-6">
+                    {% if search_query %}
+                    No doctors match your search criteria.
+                    {% else %}
+                    Get started by adding your first doctor.
+                    {% endif %}
+                </p>
+                <a href="{% url 'doctor_create' %}"
+                    class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-hospital-deep transition-colors duration-300 transform hover:scale-105">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Add New Doctor
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-8 bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} doctors
+            </div>
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                    Previous
+                </a>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <span class="px-3 py-1 border border-primary bg-primary text-white rounded-md text-sm font-medium">
+                    {{ num }}
+                </span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+                    href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                    class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                    {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
+                        class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        Next
+                    </a>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function toggleBio(doctorId) {
+        const bioElement = document.getElementById('bio-' + doctorId);
+        const button = event.target;
+
+        if (bioElement.classList.contains('hidden')) {
+            bioElement.classList.remove('hidden');
+            button.textContent = 'Hide Bio';
+        } else {
+            bioElement.classList.add('hidden');
+            button.textContent = 'View Bio';
+        }
+    }
+</script>
+{% endblock %}

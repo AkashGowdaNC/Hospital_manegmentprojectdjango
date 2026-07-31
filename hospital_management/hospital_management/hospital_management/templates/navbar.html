@@ -1,0 +1,62 @@
+<nav class="bg-gradient-to-r from-primary to-hospital-deep shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <i class="fas fa-heartbeat text-white text-2xl mr-3"></i>
+                    <span class="text-white text-xl font-bold">Clover Hospital</span>
+                </div>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="{% url 'dashboard' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
+                <a href="{% url 'patient_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-user-injured mr-2"></i>Patients
+                </a>
+                <a href="{% url 'doctor_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-user-md mr-2"></i>Doctors
+                </a>
+                <a href="{% url 'appointment_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-calendar-check mr-2"></i>Appointments
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button"
+                    class="text-white hover:text-cyan-200 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-300">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden pb-4">
+            <div class="flex flex-col space-y-2">
+                <a href="{% url 'dashboard' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
+                <a href="{% url 'patient_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+                    <i class="fas fa-user-injured mr-2"></i>Patients
+                </a>
+                <a href="{% url 'doctor_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+                    <i class="fas fa-user-md mr-2"></i>Doctors
+                </a>
+                <a href="{% url 'appointment_list' %}"
+                    class="text-white hover:text-cyan-200 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+                    <i class="fas fa-calendar-check mr-2"></i>Appointments
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

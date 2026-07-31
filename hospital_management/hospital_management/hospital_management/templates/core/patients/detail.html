@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8">
+        <div class="cherry-gradient px-6 py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center mb-4 sm:mb-0">
+                    <div
+                        class="flex-shrink-0 h-12 w-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-user-injured text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">{{ patient.name }}</h2>
+                        <p class="text-red-100">{{ patient.patient_id }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'patient_update' patient.pk %}"
+                        class="inline-flex items-center px-4 py-2 bg-white text-primary text-sm font-medium rounded-lg hover:bg-cyan-50 transition-colors duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit
+                    </a>
+                    <a href="{% url 'patient_list' %}"
+                        class="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 text-white text-sm font-medium rounded-lg hover:bg-opacity-30 transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Patient Information -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Personal Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-id-card text-primary mr-2"></i>
+                    Personal Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Full Name</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.name }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Patient ID</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {{ patient.patient_id }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Age</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.age }} years</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Gender</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.get_gender_display }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Blood Group</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if patient.blood_group %}
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
+                                {{ patient.blood_group }}
+                            </span>
+                            {% else %}
+                            <span class="text-gray-400">Not specified</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Registered On</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.created_at|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-address-book text-primary mr-2"></i>
+                    Contact Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Phone Number</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.contact_number }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Email</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if patient.email %}
+                            {{ patient.email }}
+                            {% else %}
+                            <span class="text-gray-400">Not provided</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-medium text-gray-500">Address</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ patient.address }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Emergency Contact</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if patient.emergency_contact %}
+                            {{ patient.emergency_contact }}
+                            {% else %}
+                            <span class="text-gray-400">Not provided</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-file-medical text-primary mr-2"></i>
+                    Medical Information
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Allergies</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if patient.allergies %}
+                            {{ patient.allergies|linebreaks }}
+                            {% else %}
+                            <span class="text-gray-400">No known allergies</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Medical History</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if patient.medical_history %}
+                            {{ patient.medical_history|linebreaks }}
+                            {% else %}
+                            <span class="text-gray-400">No medical history recorded</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <a href="{% url 'appointment_create' %}?patient={{ patient.pk }}"
+                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-hospital-deep transition-colors duration-300">
+                        <i class="fas fa-calendar-plus mr-2"></i>
+                        Book Appointment
+                    </a>
+                    <a href="{% url 'patient_update' patient.pk %}"
+                        class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Patient
+                    </a>
+                </div>
+            </div>
+
+            <!-- Appointment History -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
+                {% if appointments %}
+                <div class="space-y-3">
+                    {% for appointment in appointments|slice:":5" %}
+                    <div
+                        class="border border-gray-200 rounded-lg p-3 hover:border-cyan-300 transition-colors duration-200">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-mono text-primary bg-cyan-50 px-2 py-1 rounded">
+                                {{ appointment.appointment_id }}
+                            </span>
+                            <span class="text-xs px-2 py-1 rounded-full 
+                                {% if appointment.status == 'SCHEDULED' %}bg-yellow-100 text-yellow-800
+                                {% elif appointment.status == 'COMPLETED' %}bg-cyan-100 text-green-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ appointment.status }}
+                            </span>
+                        </div>
+                        <p class="text-sm font-medium text-gray-900">Dr. {{ appointment.doctor.name }}</p>
+                        <p class="text-xs text-gray-500">{{ appointment.date }} • {{ appointment.time_slot }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-gray-500 text-center py-4">No appointments yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'core/base_form.html' %}
+
+{% block form_icon %}fa-user-injured{% endblock %}
+
+{% block cancel_url %}{% url 'patient_list' %}{% endblock %}
+{% block cancel_url_bottom %}{% url 'patient_list' %}{% endblock %}
+
+{% block submit_text %}
+    {% if patient %}Update Patient{% else %}Create Patient{% endif %}
+{% endblock %}

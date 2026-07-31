@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8">
+        <div class="cherry-gradient px-6 py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center mb-4 sm:mb-0">
+                    <div
+                        class="flex-shrink-0 h-12 w-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-calendar-check text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Appointment Details</h2>
+                        <p class="text-cyan-100">{{ appointment.appointment_id }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'appointment_update' appointment.pk %}"
+                        class="inline-flex items-center px-4 py-2 bg-white text-primary text-sm font-medium rounded-lg hover:bg-cyan-50 transition-colors duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit
+                    </a>
+                    <a href="{% url 'appointment_list' %}"
+                        class="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 text-white text-sm font-medium rounded-lg hover:bg-opacity-30 transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Appointment Information -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Basic Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle text-primary mr-2"></i>
+                    Appointment Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Appointment ID</label>
+                        <p class="mt-1 text-sm text-gray-900">
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
+                                {{ appointment.appointment_id }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Status</label>
+                        <p class="mt-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if appointment.status == 'SCHEDULED' %}bg-yellow-100 text-yellow-800
+                                {% elif appointment.status == 'COMPLETED' %}bg-cyan-100 text-green-800
+                                {% elif appointment.status == 'CANCELLED' %}bg-red-100 text-red-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ appointment.get_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Date</label>
+                        <p class="mt-1 text-sm text-gray-900 font-medium">{{ appointment.date }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Time Slot</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ appointment.time_slot }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Type</label>
+                        <p class="mt-1">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if appointment.appointment_type == 'EMERGENCY' %}bg-red-100 text-red-800
+                                {% elif appointment.appointment_type == 'FOLLOW_UP' %}bg-blue-100 text-blue-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ appointment.get_appointment_type_display }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Created On</label>
+                        <p class="mt-1 text-sm text-gray-900">{{ appointment.created_at|date:"F j, Y g:i A" }}</p>
+                    </div>
+                </div>
+
+                {% if appointment.reason %}
+                <div class="mt-4">
+                    <label class="text-sm font-medium text-gray-500">Reason for Visit</label>
+                    <p class="mt-1 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{{ appointment.reason|linebreaks }}
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if appointment.notes %}
+                <div class="mt-4">
+                    <label class="text-sm font-medium text-gray-500">Additional Notes</label>
+                    <p class="mt-1 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">{{ appointment.notes|linebreaks }}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Patient Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-user-injured text-primary mr-2"></i>
+                    Patient Information
+                </h3>
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 bg-cyan-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-injured text-primary"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900">{{ appointment.patient.name }}</h4>
+                        <p class="text-sm text-gray-600">
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 mr-2">
+                                {{ appointment.patient.patient_id }}
+                            </span>
+                            {{ appointment.patient.age }} years • {{ appointment.patient.get_gender_display }}
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-phone mr-1"></i>{{ appointment.patient.contact_number }}
+                            {% if appointment.patient.email %}
+                            • <i class="fas fa-envelope ml-2 mr-1"></i>{{ appointment.patient.email }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'patient_detail' appointment.patient.pk %}"
+                        class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        View Patient Details
+                    </a>
+                </div>
+            </div>
+
+            <!-- Doctor Information -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-user-md text-hospital-mint mr-2"></i>
+                    Doctor Information
+                </h3>
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0 h-12 w-12 bg-cyan-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-md text-hospital-mint"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900">Dr. {{ appointment.doctor.name }}</h4>
+                        <p class="text-sm text-gray-600">
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 mr-2">
+                                {{ appointment.doctor.specialization }}
+                            </span>
+                            {{ appointment.doctor.qualification }}
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-phone mr-1"></i>{{ appointment.doctor.contact_number }}
+                            • <i class="fas fa-money-bill-wave ml-2 mr-1"></i>₹{{ appointment.doctor.consultation_fee }}
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-clock mr-1"></i>
+                            Available: {{ appointment.doctor.available_from|time:"g:i A" }} - {{
+                            appointment.doctor.available_to|time:"g:i A" }}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'doctor_detail' appointment.doctor.pk %}"
+                        class="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        View Doctor Details
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <!-- Status Update Form -->
+                    <form method="post" class="space-y-3">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
+                            <div class="flex space-x-2">
+                                <select name="status"
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
+                                    {% for status_value, status_label in appointment.STATUS_CHOICES %}
+                                    <option value="{{ status_value }}" {% if appointment.status == status_value %}selected{% endif %}>
+                                        {{ status_label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" name="update_status"
+                                    class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-hospital-deep transition-colors duration-300">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <a href="{% url 'appointment_update' appointment.pk %}"
+                        class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-300">
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Appointment
+                    </a>
+
+                    <a href="{% url 'appointment_create' %}?patient={{ appointment.patient.pk }}"
+                        class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-hospital-deep transition-colors duration-300">
+                        <i class="fas fa-calendar-plus mr-2"></i>
+                        New Appointment
+                    </a>
+                </div>
+            </div>
+
+            <!-- Visit History -->
+            {% if visit_history %}
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Visit History</h3>
+                <div class="space-y-3">
+                    {% if visit_history.diagnosis %}
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Diagnosis</label>
+                        <p class="mt-1 text-sm text-gray-700">{{ visit_history.diagnosis|truncatewords:20 }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if visit_history.prescription %}
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Prescription</label>
+                        <p class="mt-1 text-sm text-gray-700">{{ visit_history.prescription|truncatewords:15 }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if visit_history.follow_up_date %}
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Follow-up Date</label>
+                        <p class="mt-1 text-sm text-gray-700">{{ visit_history.follow_up_date }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Emergency Alert -->
+            {% if appointment.appointment_type == 'EMERGENCY' %}
+            <div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+                    <div>
+                        <h4 class="text-sm font-semibold text-red-800">Emergency Case</h4>
+                        <p class="text-sm text-red-600 mt-1">This appointment requires immediate attention.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

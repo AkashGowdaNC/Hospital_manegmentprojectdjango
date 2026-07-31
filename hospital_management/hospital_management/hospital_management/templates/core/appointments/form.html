@@ -1,0 +1,75 @@
+{% extends 'core/base_form.html' %}
+
+{% block form_icon %}fa-calendar-plus{% endblock %}
+
+{% block cancel_url %}{% url 'appointment_list' %}{% endblock %}
+{% block cancel_url_bottom %}{% url 'appointment_list' %}{% endblock %}
+
+{% block submit_text %}
+    {% if appointment %}Update Appointment{% else %}Book Appointment{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorSelect = document.getElementById('doctor-select');
+    const dateInput = document.getElementById('appointment-date');
+    const timeSlotSelect = document.getElementById('time-slot-select');
+    
+    // Function to load available time slots
+    function loadAvailableSlots() {
+        const doctorId = doctorSelect.value;
+        const date = dateInput.value;
+        
+        if (doctorId && date) {
+            // Show loading state
+            timeSlotSelect.innerHTML = '<option value="">Loading available slots...</option>';
+            timeSlotSelect.disabled = true;
+            
+            // Fetch available slots from API
+            fetch(`/api/doctors/${doctorId}/slots/?date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    timeSlotSelect.innerHTML = '';
+                    
+                    if (data.available_slots.length > 0) {
+                        data.available_slots.forEach(slot => {
+                            const option = document.createElement('option');
+                            option.value = slot;
+                            option.textContent = slot;
+                            timeSlotSelect.appendChild(option);
+                        });
+                        timeSlotSelect.disabled = false;
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'No available slots for this date';
+                        timeSlotSelect.appendChild(option);
+                        timeSlotSelect.disabled = true;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching slots:', error);
+                    timeSlotSelect.innerHTML = '<option value="">Error loading slots</option>';
+                });
+        } else {
+            timeSlotSelect.innerHTML = '<option value="">Select doctor and date first</option>';
+            timeSlotSelect.disabled = true;
+        }
+    }
+    
+    // Event listeners
+    doctorSelect.addEventListener('change', loadAvailableSlots);
+    dateInput.addEventListener('change', loadAvailableSlots);
+    
+    // Initialize if values are already selected (for edit mode)
+    if (doctorSelect.value && dateInput.value) {
+        loadAvailableSlots();
+    }
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+});
+</script>
+{% endblock %}
